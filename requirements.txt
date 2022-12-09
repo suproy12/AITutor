@@ -1,0 +1,13 @@
+pandas<1.2.0
+streamlit==1.14.1
+tensorflow
+dlib
+opencv-python
+mtcnn
+deepface
+psycopg2
+matplotlib
+imutils
+scipy
+psycopg2
+tensorflow.keras
