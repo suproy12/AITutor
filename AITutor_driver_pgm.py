@@ -38,6 +38,7 @@ from datetime import datetime,date
 import time
 import psycopg2
 import psycopg2.extras
+import winsound
 TrueFlag = 'N'
 font = cv2.FONT_HERSHEY_TRIPLEX
 
@@ -73,7 +74,7 @@ class VideoTransformer(VideoTransformerBase):
     def transform(self, frame):
         
         COUNTER = 0
-       
+        write_sleepy = 'N'
         img = frame.to_ndarray(format="bgr24")
         pic = frame.to_image()
         process_change(img)
@@ -145,9 +146,14 @@ class VideoTransformer(VideoTransformerBase):
                 else :
                     savbhvr = ''
                 write_flag_bhvr = 'N'
-
+                write_sleepy = 'N'
                 if mouth_open_ratio > 0.380 and eye_open_ratio > 4.0 or eye_open_ratio > 4.30:
                     bhvrstate = 'Sleepy'
+                    #playsound('C:/Users/Supra/Documents/Supravat/Documents/ISB/Capstone Project/screen/alert.mp3')
+                    write_sleepy = 'Y'
+                    outputtxt = 'Be Attentive'
+                    
+                   
                 else :
                     bhvrstate ='not-sleepy'
                 
@@ -163,9 +169,14 @@ class VideoTransformer(VideoTransformerBase):
                    write_postgressbhvr('Ray',bhvrstate)
                 
                   
-            
-            label_position = (x, y-10)
-            cv2.putText(img, output, label_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            if write_sleepy == 'Y' :
+                winsound.Beep(1000,500)
+                label_position = (x, y-10)
+                cv2.putText(img, outputtxt, label_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+            else : 
+                label_position = (x, y-10)
+                cv2.putText(img, output, label_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         
         #return av.VideoFrame.from_image(pic)  
         return img   
@@ -174,30 +185,7 @@ class VideoTransformer(VideoTransformerBase):
         
 
 
-class VideoTransformer1(VideoTransformerBase):
-    
-    def recv(self, frame):
-        #fig = plt.figure()
-       
-        img = frame.to_ndarray(format="bgr24")
-        #image gray
-        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        detector = MTCNN()
-        faces = detector.detect_faces(img_gray)
-        #print(faces)
-        for index,current_face_location in enumerate(faces):
-            x, y, w, h = detected_face['box']
-            (x, y) = (max(0, x), max(0, y))
-            (x2, y2) = (min(im_w - 1, x+w), min(im_h - 1, y+h))
-            face = img[y:y2, x:x2]
-            face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-            face = cv2.resize(face, (224, 224))
-            face = img_to_array(face)
-            face = np.expand_dims(face, axis=0)
-            face = preprocess_input(face)
-            color = (0, 255, 0)
-            cv2.rectangle(img, (x, y), (x2, y2), color, 2)      
-        return img
+
         
 class FaceAuthenticator(VideoTransformerBase):
     
