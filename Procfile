@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run videostream.py
+web: sh setup.sh && streamlit run AITutor_driver_pgm.py

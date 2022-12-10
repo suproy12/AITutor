@@ -11,3 +11,5 @@ imutils
 scipy
 psycopg2
 tensorflow.keras
+numpy
+winsound
